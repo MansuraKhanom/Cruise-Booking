@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curise Booking</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" rel="stylesheet" />
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!--Header and Menu Section-->
+    <header class="container">
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a class="active" href="#">Sign Up</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!--Booking Section-->
+    <main id="main" class="main-content container">
+
+        <div class="booking-content">
+            <h1>Cruise Queen</h1>
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book.</p>
+        </div>
+
+        <div class="booking-form">
+            <h3>Book Ocean Time</h3>
+            <div class="input-group">
+                <label for="">Sailing From</label>
+                <input type="text" name="" placeholder="Dhake, Bangladesh">
+            </div>
+            <div class="input-group">
+                <label for="">Sailing To</label>
+                <input type="text" name="" placeholder="New York, United States">
+            </div>
+            <div class="inputs">
+                <div class="input-group">
+                    <label for="">Departure</label>
+                    <input id="from-date" type="date" name="">
+                </div>
+                <div class="input-group">
+                    <label for="">Return</label>
+                    <input id="to-date" type="date" name="">
+                </div>
+            </div>
+            <div class="input-group f-class">
+                <div>
+                    <label for="">First Class ($<span id="firstClassPrice">150</span> )</label>
+                    <input type="text" id="first-class" class="inp-width" value="0">
+                </div>
+
+                <div class="plus-minus-btn">
+                    <button id="f-plus-btn"><i class="fas fa-plus"></i></button>
+                    <button id="f-minus-btn"><i class="fas fa-minus"></i></button>
+
+                </div>
+            </div>
+
+            <div class="input-group f-class">
+                <div>
+                    <label for="">Economy ($<span id="economyClassPrice">100</span>)</label>
+                    <input type="text" id="economy-class" class="inp-width" value="0">
+                </div>
+                <div class="plus-minus-btn">
+                    <button id="e-plus-btn"><i class="fas fa-plus"></i></button>
+                    <button id="e-minus-btn"><i class="fas fa-minus"></i></button>
+                </div>
+            </div>
+            <div class="calculations">
+                <div class="amount">
+                    <div class="left">
+                        <p>Subtotal</p>
+                    </div>
+                    <div class="right">
+                        <p>$<span id="subtotal">0</span> </p>
+                    </div>
+                </div>
+
+                <div class="amount">
+                    <div class="left">
+                        <p>Charge 10% VAT</p>
+                    </div>
+                    <div class="right">
+                        <p>$<span id="vat">0</span> </p>
+                    </div>
+                </div>
+                <hr>
+                <div class="amount">
+                    <div class="left">
+                        <h4>Total</h4>
+                    </div>
+                    <div class="right">
+                        <p>$<span id="total">0</span></p>
+                    </div>
+                </div>
+            </div>
+            <a href="confirmation.html"><button id="booking" class="btn-style">Book Now</button></a>
+        </div>
+    </main>
+
+    <script>
+
+        const vatRate = 0.1;
+        var classTotals = [0, 0]; // List of individual class total
+
+        // For plus button: First class
+        const firstPlusBtn = document.getElementById("f-plus-btn");
+        firstPlusBtn.addEventListener("click", function () {
+            const change = 1;
+            btnPressed("first-class", "firstClassPrice", change);
+        })
+
+        // For minus button: First class
+        const firstMinusBtn = document.getElementById("f-minus-btn");
+        firstMinusBtn.addEventListener("click", function () {
+            const change = -1;
+            btnPressed("first-class", "firstClassPrice", change);
+        })
+
+        // For plus button: Economy class
+        const economyPlusBtn = document.getElementById("e-plus-btn");
+        economyPlusBtn.addEventListener("click", function () {
+            const change = 1;
+            btnPressed("economy-class", "economyClassPrice", change);
+        })
+
+        // For minus button: Economy class
+        const economyMinusBtn = document.getElementById("e-minus-btn");
+        economyMinusBtn.addEventListener("click", function () {
+            const change = -1;
+            btnPressed("economy-class", "economyClassPrice", change);
+        })
+
+        // Single function for all the calculations and updates
+
+        function btnPressed(idInput, idPrice, change) {
+            const inputOldValue = parseFloat(document.getElementById(idInput).value);
+            if ((change == -1 && inputOldValue > 0) || change == 1) {
+                // Quantity cannot be negative. Restricting minimum quantity to zero
+
+                const inputNewValue = inputOldValue + change;
+                document.getElementById(idInput).value = inputNewValue;
+
+                const unitPrice = parseFloat(document.getElementById(idPrice).innerText);
+                const unitTotal = inputNewValue * unitPrice;
+
+                if (idInput == "first-class") {
+                    // If updates first-class quantity
+                    classTotals[0] = unitTotal;
+                } else {
+                    // If updates economy-class quantity
+                    classTotals[1] = unitTotal;
+                }
+
+                // Calculating prices : total, subtotal, & vat
+                var subtotal = classTotals.reduce((accum, curr) => accum + curr);
+                document.getElementById("subtotal").innerText = subtotal;
+                var vat = subtotal * vatRate;
+                document.getElementById("vat").innerText = vat;
+                document.getElementById("total").innerText = subtotal + vat;
+            }
+        }
+    </script>
+
+    <!-- Loading jquery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <script>
+        //To restrict past dates
+        var minDate = new Date().toISOString().slice(0, 10);
+        var maxDate;
+        $('#from-date').attr('min', minDate);
+        $('#to-date').attr('min', minDate);
+
+        // Cannot pick return-date before selected departure-date
+        $('#from-date').change(function () {
+            minDate = $(this).val();
+            $('#to-date').attr('min', minDate);
+        });
+
+        // Cannot pick departure-date after selected return-date
+        $('#to-date').change(function () {
+            maxDate = $(this).val();
+            $('#from-date').attr('max', maxDate);
+        });
+    </script>
+    <!--Thank You-->
+</body>
+
+</html>
